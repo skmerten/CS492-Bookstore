@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Inventory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <h1>Book Inventory</h1>
+
+    <a href="/">Go Home</a>
+
+    {% for book in books %}
+        <p>
+            {{ book.title }} -
+            {{ book.author }} -
+            Quantity: {{ book.quantity }}
+        </p>
+    {% empty %}
+        <p>No books found.</p>
+    {% endfor %}
+
+</body>
+</html>
