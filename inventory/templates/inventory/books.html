@@ -1,24 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Book Inventory</title>
+    <title>Book</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-
+<div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Book Inventory</h1>
+        <a href="/" class="btn btn-primary">Go Home </a>
+    <!-- This will limit this element to only uses who are logged in. Just wrap it in the template {if} {endif} blocks-->    
+    {% if user.is_authenticated %}
+        <a href="{% url 'add_book' %}" class="btn btn-success">
+            Add Book
+        </a>
+    {% endif %}
+</div>
 
-    <a href="/">Go Home</a>
 
-    {% for book in books %}
-        <p>
-            {{ book.title }} -
-            {{ book.author }} -
-            Quantity: {{ book.quantity }}
-        </p>
-    {% empty %}
-        <p>No books found.</p>
-    {% endfor %}
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search by title, athor, ISBN"
+            value="{{ query }}"
+        >
+
+        <button type="submit" class="btn btn-primary">
+            Search
+        </button>
+
+        {% if query %}
+            <a href="{% url 'books' %}" class="btn btn-secondary">
+                Clear
+            </a>
+        {% endif %}
+    </div>
+</form>
+
+<!-- Ok so the goal here is that everyone can search and view books
+ But only logged in (employees) can modify the records-->
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Shelf</th>
+            {% if user.is_authenticated %}
+                <th>Actions</th>
+            {% endif %}
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for book in books %}
+
+        <tr>
+            <!-- Not sure what data we want to restrict from public view.-->
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.isbn }}</td>
+            <td>${{ book.price }}</td>
+            <td>{{ book.quantity }}</td>
+            <td>{{ book.shelf_location }}</td>
+
+            {% if user.is_authenticated %}
+                <td>
+                    <a
+                        href="{% url 'edit_book' book.id %}"
+                        class="btn btn-sm btn-primary"
+                    >
+                        Edit
+                    </a>
+
+                    <form
+                        method="post"
+                        action="{% url 'delete_book' book.id %}"
+                        style="display: inline;"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-sm btn-danger"
+                        >
+                            Delete
+                        </button>
+                    </form>
+                </td>
+
+            {% endif %}
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="8">
+                No books found.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
 
 </body>
 </html>

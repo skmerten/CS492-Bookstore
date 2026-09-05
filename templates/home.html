@@ -8,22 +8,20 @@
 
     <h1>Welcome to the Bookstore</h1>
 
-    <a href="/inventory/">Browse Books</a>
+    <a href="/inventory/" class="btn btn-primary">Browse Books</a>
 
     {% if user.is_authenticated %}
 
         <p>Logged in as {{ user.username }}</p>
 
-        <a href="/inventory/manage">Update Books</a>
-
         <form method="post" action="/logout/">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit" class="btn btn-primary">Logout</button>
         </form>
 
     {% else %}
 
-        <a href="/login/">Employee Login</a>
+        <a href="/login/" class="btn btn-secondary">Employee Login</a>
 
     {% endif %}
 

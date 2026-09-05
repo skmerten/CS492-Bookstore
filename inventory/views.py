@@ -2,22 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Book
 from .forms import BookForm
-
+from django.db.models import Q
 
 
 def books(request):
+    query = request.GET.get("search", "")
     books = Book.objects.all()
+    if query:
+        books = books.filter(Q(title__icontains=query) | Q(author__icontains=query) | Q(isbn__icontains=query))
+    return render(request, "inventory/books.html", {"books": books,"query": query})
 
-    return render(request,"inventory/books.html",{"books": books})
-
-@login_required
-def manage_inventory(request):
-    books = Book.objects.all()
-    return render(
-        request,
-        "inventory/manage_inventory.html",
-        {"books": books}
-    )
 
 @login_required
 def add_book(request):
@@ -26,7 +20,7 @@ def add_book(request):
 
         if form.is_valid():
             form.save()
-            return redirect("manage_inventory")
+            return redirect("books")
     else:
         form = BookForm()
 
@@ -42,7 +36,7 @@ def edit_book(request, book_id):
 
         if form.is_valid():
             form.save()
-            return redirect("manage_inventory")
+            return redirect("books")
     else:
         form = BookForm(instance=book)
 
@@ -56,4 +50,4 @@ def delete_book(request, book_id):
     if request.method == "POST":
         book.delete()
 
-    return redirect("inventory/manage_inventory")
+    return redirect("books")
