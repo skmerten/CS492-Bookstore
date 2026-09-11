@@ -9,10 +9,14 @@
     <h1>Welcome to the Bookstore</h1>
 
     <a href="/inventory/" class="btn btn-primary">Browse Books</a>
+    <a href="/cart/" class="btn btn-outline-primary">View Cart</a>
 
     {% if user.is_authenticated %}
 
         <p>Logged in as {{ user.username }}</p>
+        <a href="/sales/cash-payment/" class="btn btn-success">
+            Cashier Sales
+        </a>
 
         <form method="post" action="/logout/">
             {% csrf_token %}

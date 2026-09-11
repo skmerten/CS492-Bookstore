@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--The title shown in the browser tab.-->
+        <title>Your Cart</title>
+
+        <!--Bootstrap provides the page's basic styling.-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+    </head>
+
+    <body class="container py-4">
+        <!--Main heading for the cart page.-->
+        <h1>Your Cart</h1>
+
+        <!--If items were added to the cart, dispayed in a table.-->
+        {% if items %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Line Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!--Repeat this row once for every item.-->
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.book.title }}</td>
+                    <td>{{ item.book.author }}</td>
+                    <td>{{ item.book.price }}</td>
+                    <td>
+                        <!--Let customer set the number of copies they want.-->
+                        <form method="post" action="{% url 'cart:update' item.book.id %}" class="d-flex gap-2">
+                            {% csrf_token %}
+
+                            <!--Minimum is 0 and the maximum is the available inventory-->
+                            <input 
+                            type="number"
+                            name="quantity"
+                            min="0"
+                            max="{{ item.book.quantity }}"
+                            value="{{ item.quantity }}"
+                            class="form-control"
+                            style="max-width: 80px;"
+                            >
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                Update
+                            </button>
+                        </form>
+                    </td>
+                    <td>${{ item.line_total }}</td>
+                    <td>
+                        <!--Remove every copy of book from cart.-->
+                        <form method="post" action="{% url 'cart:remove' item.book.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!--Displays the combined cost of all books in the cart.-->
+        <p class="text-end fs-4">
+            <strong>Subtotal: ${{ subtotal }}</strong>
+        </p>
+        {% else %}
+        <!--Show this message when no books have been added.-->
+        <p>Your cart is empty.</p>
+        {% endif %}
+
+        <!--Takes the customer back to the inventory/book list.-->
+        <a href="{% url 'books' %}" class="btn btn-primary">
+            Continue Shopping
+        </a>
+    </body>
+</html>

@@ -24,7 +24,7 @@ load_dotenv(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-classroom-development-key-not-for-production",)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -44,10 +44,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-# Already udpated the apps to include the 3 modules/apps
+# Already udpated the apps to include the 4 modules/apps
     "inventory",
     "sales",
     "orders",
+    "cart",
 ]
 
 MIDDLEWARE = [
