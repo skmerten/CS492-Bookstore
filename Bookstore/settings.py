@@ -63,7 +63,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+]
 ROOT_URLCONF = "Bookstore.urls"
 
 TEMPLATES = [
