@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Book</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}
+    Books | Bookstore
+{% endblock %}
+
+{% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Book Inventory</h1>
-        <a href="/" class="btn btn-primary">Go Home </a>
-        <a href="/cart/" class="btn btn-outline-primary">View Cart</a>
     <!-- This will limit this element to only uses who are logged in. Just wrap it in the template {if} {endif} blocks-->    
     {% if user.is_authenticated %}
         <a href="{% url 'add_book' %}" class="btn btn-success">
@@ -17,16 +14,6 @@
         </a>
     {% endif %}
 </div>
-
-<!--Shows success, warning or error messages after cart actions.-->
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
-
 
 <form method="get" class="mb-4">
     <div class="input-group">
@@ -147,5 +134,4 @@
     </tbody>
 </table>
 
-</body>
-</html>
+{% endblock %}

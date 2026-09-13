@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <!--The title shown in the browser tab.-->
-        <title>Your Cart</title>
+{% extends "base.html" %}
 
-        <!--Bootstrap provides the page's basic styling.-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-    </head>
+{% block title %}
+    Your Cart | Bookstore
+{% endblock %}
 
-    <body class="container py-4">
-        <!--Main heading for the cart page.-->
-        <h1>Your Cart</h1>
+{% block content %}
+
+<h1>Your Cart</h1>
 
         <!--If items were added to the cart, dispayed in a table.-->
         {% if items %}
@@ -89,5 +84,4 @@
         <a href="{% url 'books' %}" class="btn btn-primary">
             Continue Shopping
         </a>
-    </body>
-</html>
+{% endblock %}
