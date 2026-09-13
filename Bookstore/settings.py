@@ -29,7 +29,10 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-classroom-deve
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [    
+    "localhost",
+    "127.0.0.1",
+    ".vercel.app",]
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
@@ -74,6 +77,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "cart.context_processors.cart_count",
             ],
         },
     },
