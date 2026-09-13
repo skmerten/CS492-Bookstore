@@ -72,6 +72,14 @@
         <p class="text-end fs-4">
             <strong>Subtotal: ${{ subtotal }}</strong>
         </p>
+        <form method="post" action="{% url 'sales:checkout' %}" class="text-end mb-3">
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-success btn-lg">
+                Checkout
+            </button>
+        </form>
+
         {% else %}
         <!--Show this message when no books have been added.-->
         <p>Your cart is empty.</p>
