@@ -4,6 +4,46 @@ Bookstore Capstone Project
 
 This project is a Django web application developed for the CS492 Capstone Project. The instructions below are written for a computer that does not already have the project requirements installed.
 
+## Live Website
+
+A live version of the CS492 Bookstore project is available online.
+
+[Visit the Group 6 CS492 Bookstore Website](https://cs492-bookstore-vercel.vercel.app)
+
+Feel free to explore the site and test the available features.
+
+## Quick Start
+
+If Python 3.12 or later is already installed, you can use the included launcher to automatically set up and start the project.
+
+### Windows
+
+Double-click:
+
+`run_bookstore.bat`
+
+### macOS
+
+Double-click:
+
+`run_bookstore.command`
+
+The launcher will automatically:
+
+- Create a Python virtual environment
+- Install the required dependencies
+- Create the local `.env` file if needed
+- Generate a Django secret key
+- Run database migrations
+- Check the Django configuration
+- Start the local development server
+
+Once started, the website will be available at:
+
+[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+If the launcher does not work, follow the manual setup instructions below.
+
 ## Prerequisites
 
 Before beginning, install **Python 3.12**. Python 3.12 is recommended because it matches the Python version used by the deployed application.
@@ -325,49 +365,6 @@ The production deployment uses PostgreSQL because the deployment environment is 
 ---
 
 ## Common Troubleshooting
-
-### `python` or `py` is not recognized
-
-Python is either not installed or is not available on the system PATH. Install Python and reopen the terminal before continuing.
-
-### PowerShell will not activate `.venv`
-
-If PowerShell reports that script execution is disabled, Command Prompt can be used instead:
-
-```cmd
-.venv\Scripts\activate.bat
-```
-
-Alternatively, PowerShell's execution policy can be adjusted according to the security requirements of the computer being used.
-
-### `ModuleNotFoundError` for Django or another package
-
-Confirm that the virtual environment is active and reinstall the requirements:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-### `DJANGO_SECRET_KEY` or environment configuration error
-
-Confirm that:
-
-1. `.env.example` was copied to `.env`.
-2. `.env` contains a line in the following format:
-
-```text
-DJANGO_SECRET_KEY="your-generated-secret-key"
-```
-
-3. The `.env` file is saved in the same project folder as `manage.py`.
-
-### `no such table` database error
-
-Run the migrations:
-
-```bash
-python manage.py migrate
-```
 
 ### Port 8000 is already in use
 
