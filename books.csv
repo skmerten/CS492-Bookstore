@@ -1,0 +1,101 @@
+title,author,isbn,price,quantity,shelf_location
+The Last Harbor,Elena Marlowe,9781000000016,8.99,0,A-01
+Winter on Cedar Street,Nathan Cole,9781000000023,9.99,1,A-02
+A Map of Forgotten Places,Clara Bennett,9781000000030,10.99,2,A-03
+The Glass Orchard,Samuel Reed,9781000000047,11.99,3,A-04
+Before the Morning Train,Lydia Hart,9781000000054,12.99,5,A-05
+Echoes from Blackwood,Marcus Vale,9781000000061,13.99,8,A-06
+The Paper Kingdom,Isabel Monroe,9781000000078,14.99,10,A-07
+Under a Copper Sky,Daniel Cross,9781000000085,15.99,12,A-08
+The Lighthouse Letters,Amelia Grant,9781000000092,16.99,15,A-09
+Where Rivers Divide,Jonah Pierce,9781000000108,17.99,20,A-10
+The Clockmaker's Secret,Evelyn Shaw,9781000000115,18.99,0,B-01
+North of Evergreen,Caleb Morgan,9781000000122,19.99,1,B-02
+A Season of Small Fires,Rebecca Lane,9781000000139,21.99,2,B-03
+The Silent Gallery,Adrian Wells,9781000000146,22.99,3,B-04
+Letters from Bellweather,Maya Collins,9781000000153,24.99,5,B-05
+The Mountain Between Roads,Thomas Avery,9781000000160,27.99,8,B-06
+The Blue Door Café,Sophie Ellis,9781000000177,29.99,10,B-07
+The Other Side of Summer,Graham Foster,9781000000184,32.99,12,B-08
+A House Full of Stars,Nora Fields,9781000000191,34.99,15,B-09
+The Long Way to Brighton,Peter Caldwell,9781000000207,39.99,20,B-10
+Signal Lost,Ryan Mercer,9781000000214,8.99,0,C-01
+Orbital Dawn,Kira Stanton,9781000000221,9.99,1,C-02
+The Europa Protocol,Miles Keene,9781000000238,10.99,2,C-03
+Redshift,Avery Quinn,9781000000245,11.99,3,C-04
+Beyond the Helios Gate,Tessa Rowan,9781000000252,12.99,5,C-05
+The Last Colony Ship,Derek Sloan,9781000000269,13.99,8,C-06
+Artificial Horizon,Lena Park,9781000000276,14.99,10,C-07
+The Mars Cartographer,Ian Beckett,9781000000283,15.99,12,C-08
+Zero Point Station,Naomi Brooks,9781000000290,16.99,15,C-09
+The Quiet Machine,Elias Ward,9781000000306,17.99,20,C-10
+Dead Reckoning,Claire Bishop,9781000000313,18.99,0,D-01
+The Fifth Witness,Owen Fletcher,9781000000320,19.99,1,D-02
+The Hollow Alibi,Vivian Knox,9781000000337,21.99,2,D-03
+After Midnight,Cole Ramsey,9781000000344,22.99,3,D-04
+The Brighton Murders,Julia Kent,9781000000351,24.99,5,D-05
+No Safe Address,Grant Holloway,9781000000368,27.99,8,D-06
+The Missing Hour,Paige Lawson,9781000000375,29.99,10,D-07
+Cold Evidence,Trevor Nash,9781000000382,32.99,12,D-08
+The Last Interview,Monica Drake,9781000000399,34.99,15,D-09
+A Reasonable Doubt,Henry Dalton,9781000000405,39.99,20,D-10
+Python for Everyday Problems,Aaron Mitchell,9781000000412,8.99,0,E-01
+Practical Data Structures,Nina Patel,9781000000429,9.99,1,E-02
+Learning SQL by Example,Victor Chen,9781000000436,10.99,2,E-03
+Modern Web Development,Rachel Kim,9781000000443,11.99,3,E-04
+Django from the Ground Up,Leon Harris,9781000000450,12.99,5,E-05
+Clean Code Patterns,Priya Desai,9781000000467,13.99,8,E-06
+Introduction to Machine Learning,Eric Wallace,9781000000474,14.99,10,E-07
+Applied Database Design,Melissa Ford,9781000000481,15.99,12,E-08
+Software Testing Essentials,Jordan Blake,9781000000498,16.99,15,E-09
+Git Without Fear,Cameron Price,9781000000504,17.99,20,E-10
+The Practical Home Workshop,Martin Ellis,9781000000511,18.99,0,F-01
+Building with Aluminum,George Baxter,9781000000528,19.99,1,F-02
+3D Printing for Makers,Hannah Lewis,9781000000535,21.99,2,F-03
+CAD Design Fundamentals,Robert Klein,9781000000542,22.99,3,F-04
+The Garage Engineer,Felix Turner,9781000000559,24.99,5,F-05
+Mechanical Design Basics,Laura Simmons,9781000000566,27.99,8,F-06
+Reverse Engineering Made Simple,Kevin Rhodes,9781000000573,29.99,10,F-07
+Small Shop Manufacturing,Diana Porter,9781000000580,32.99,12,F-08
+Materials for Modern Makers,Andrew Mills,9781000000597,34.99,15,F-09
+Precision Measurement Handbook,Sarah Doyle,9781000000603,39.99,20,F-10
+Campfire Suppers,Emily Hayes,9781000000610,8.99,0,G-01
+Meals for the Open Road,Jack Warren,9781000000627,9.99,1,G-02
+One-Pot Camping,Molly Pearson,9781000000634,10.99,2,G-03
+Trailside Cooking,Ben Harper,9781000000641,11.99,3,G-04
+The Weekend Baker,Olivia Stone,9781000000658,12.99,5,G-05
+Simple Kitchen Science,Matthew Greene,9781000000665,13.99,8,G-06
+Cast Iron Every Day,Grace Palmer,9781000000672,14.99,10,G-07
+Fresh Bread at Home,Lucas Bennett,9781000000689,15.99,12,G-08
+The Practical Pantry,Anna Moreno,9781000000696,16.99,15,G-09
+Cooking Small,David Lin,9781000000702,17.99,20,G-10
+Desert Trails of the Southwest,Wesley Carter,9781000000719,18.99,0,H-01
+Backroads California,Megan Price,9781000000726,19.99,1,H-02
+Off-Road Basics,Tyler Monroe,9781000000733,21.99,2,H-03
+Camping Beyond the Crowds,Alice Gardner,9781000000740,22.99,3,H-04
+The Overland Handbook,James Rivera,9781000000757,24.99,5,H-05
+Navigation Without a Signal,Chris Dalton,9781000000764,27.99,8,H-06
+Vehicle Recovery Fundamentals,Morgan Hayes,9781000000771,29.99,10,H-07
+Trail Repairs,Scott Bennett,9781000000788,32.99,12,H-08
+Weekend Expeditions,Kelly Wright,9781000000795,34.99,15,H-09
+The Mountain Road Guide,Brian Cooper,9781000000801,39.99,20,H-10
+The Curious World of Physics,Dr. Helen Marsh,9781000000818,8.99,0,I-01
+Everyday Astronomy,Paul Richards,9781000000825,9.99,1,I-02
+How Machines Work,Dennis Clarke,9781000000832,10.99,2,I-03
+The Biology Around Us,Sara Jenkins,9781000000849,11.99,3,I-04
+A Short Guide to Chemistry,Michael Torres,9781000000856,12.99,5,I-05
+Weather Explained,Lauren Diaz,9781000000863,13.99,8,I-06
+The Ocean Below,Patrick Woods,9781000000870,14.99,10,I-07
+Understanding Electricity,Janet Coleman,9781000000887,15.99,12,I-08
+Mathematics in Motion,Steven Ross,9781000000894,16.99,15,I-09
+The Science of Materials,Karen Young,9781000000900,17.99,20,I-10
+Business Basics for Makers,Nicole Adams,9781000000917,18.99,0,J-01
+Starting a Small Workshop,Gregory Hall,9781000000924,19.99,1,J-02
+Simple Bookkeeping,Erin Matthews,9781000000931,21.99,2,J-03
+The Independent Seller,Jason Webb,9781000000948,22.99,3,J-04
+Shipping Made Simple,Monica Flores,9781000000955,24.99,5,J-05
+Pricing Your Work,Adam Curtis,9781000000962,27.99,8,J-06
+Customer Service for Small Business,Heather James,9781000000979,29.99,10,J-07
+The Practical Entrepreneur,Sean Foster,9781000000986,32.99,12,J-08
+Managing Inventory,Rachel Owens,9781000000993,34.99,15,J-09
+From Hobby to Business,Mark Sullivan,9781000001006,39.99,20,J-10
