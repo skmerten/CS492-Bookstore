@@ -1,13 +1,13 @@
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_POST
 
 from inventory.models import Book
+from .forms import CustomerCheckoutForm
 from .models import Sale, SaleItem
 
 # Only logged-in employees may access the cashier payment page
@@ -48,85 +48,167 @@ def cash_payment(request):
     #Display the page with calculation results.
     return render(request, "sales/cash_payment.html", context)
 
-@require_POST
 def checkout(request):
-    # Get the customer's current shopping cart.
+    # Get the current shopping cart.
     cart = request.session.get("cart", {})
 
-    # Do not allow an empty cart to be checked out.
+    # Do not allow checkout with an empty cart.
     if not cart:
         messages.warning(request, "Your cart is empty.")
         return redirect("cart:detail")
 
-    try:
-        # Everything inside this block succeeds together or fails together.
-        with transaction.atomic():
+    # Build information needed to display the checkout page.
+    books = Book.objects.filter(id__in=cart.keys())
+    books_by_id = {
+        str(book.id): book
+        for book in books
+    }
 
-            # Create the main sale record.
-            sale = Sale.objects.create(
-                user=request.user if request.user.is_authenticated else None,
-                payment_method="Mock Checkout",
+    items = []
+    display_subtotal = Decimal("0.00")
+
+    # Make sure every book in the cart still exists.
+    for book_id, quantity in cart.items():
+
+        book = books_by_id.get(str(book_id))
+
+        if book is None:
+            messages.error(
+                request,
+                "One of the books in your cart is no longer available."
             )
+            return redirect("cart:detail")
 
-            subtotal = Decimal("0.00")
+        quantity = int(quantity)
+        price = book.price or Decimal("0.00")
+        line_total = price * quantity
 
-            # Convert each cart item into a SaleItem.
-            for book_id, quantity in cart.items():
-                quantity = int(quantity)
+        items.append({
+            "book": book,
+            "quantity": quantity,
+            "line_total": line_total,
+        })
 
-                # Get the latest copy of the book from the database.
-                book = Book.objects.select_for_update().get(id=book_id)
+        display_subtotal += line_total
 
-                # Check inventory again at checkout.
-                if quantity > book.quantity:
-                    raise ValueError(
-                        f"Only {book.quantity} copies of {book.title} are available."
-                    )
+    # GET = display empty form.
+    # POST = populate form with submitted customer information.
+    form = CustomerCheckoutForm(request.POST or None)
 
-                price = book.price or Decimal("0.00")
-                line_total = price * quantity
+    if request.method == "POST" and form.is_valid():
 
-                # Save this purchased book as a sale line item.
-                SaleItem.objects.create(
-                    sale=sale,
-                    book=book,
-                    quantity=quantity,
-                    price_each=price,
-                    line_total=line_total,
+        try:
+            # Customer, sale, sale items, and inventory changes
+            # must either ALL succeed or ALL fail.
+            with transaction.atomic():
+
+                # Save customer information.
+                customer = form.save()
+
+                # Create sale header.
+                sale = Sale.objects.create(
+                    customer=customer,
+                    user=request.user
+                    if request.user.is_authenticated
+                    else None,
+                    payment_method="Mock Checkout",
                 )
 
-                # Reduce inventory.
-                book.quantity -= quantity
-                book.save(update_fields=["quantity"])
+                subtotal = Decimal("0.00")
 
-                subtotal += line_total
+                for book_id, quantity in cart.items():
 
-            # For now this is a mock checkout, so no tax calculation.
-            sale.subtotal = subtotal
-            sale.tax = Decimal("0.00")
-            sale.total = subtotal
-            sale.amount_paid = subtotal
-            sale.save()
+                    quantity = int(quantity)
 
-    except Book.DoesNotExist:
-        messages.error(
-            request,
-            "One of the books in your cart is no longer available."
+                    # Get current book information.
+                    book = Book.objects.get(id=book_id)
+
+                    # Atomically subtract inventory ONLY if enough
+                    # inventory still exists.
+                    updated_rows = Book.objects.filter(
+                        id=book_id,
+                        quantity__gte=quantity,
+                    ).update(
+                        quantity=F("quantity") - quantity
+                    )
+
+                    # Zero updated rows means someone else purchased
+                    # the remaining inventory first.
+                    if updated_rows == 0:
+
+                        current_quantity = (
+                            Book.objects
+                            .filter(id=book_id)
+                            .values_list("quantity", flat=True)
+                            .first()
+                        )
+
+                        if current_quantity is None:
+                            raise ValueError(
+                                f"{book.title} is no longer available."
+                            )
+
+                        raise ValueError(
+                            f"Only {current_quantity} copies of "
+                            f"{book.title} are currently available."
+                        )
+
+                    price = book.price or Decimal("0.00")
+                    line_total = price * quantity
+
+                    SaleItem.objects.create(
+                        sale=sale,
+                        book=book,
+                        quantity=quantity,
+                        price_each=price,
+                        line_total=line_total,
+                    )
+
+                    subtotal += line_total
+
+                # Finish calculating sale totals.
+                sale.subtotal = subtotal
+                sale.tax = Decimal("0.00")
+                sale.total = subtotal
+                sale.amount_paid = subtotal
+                sale.save()
+
+        except Book.DoesNotExist:
+
+            messages.error(
+                request,
+                "One of the books in your cart is no longer available."
+            )
+
+            return redirect("cart:detail")
+
+        except ValueError as error:
+
+            messages.error(
+                request,
+                str(error)
+            )
+
+            return redirect("cart:detail")
+
+        # Only clear the cart AFTER everything succeeds.
+        request.session["cart"] = {}
+        request.session.modified = True
+
+        return redirect(
+            "sales:confirmation",
+            sale_id=sale.id
         )
-        return redirect("cart:detail")
 
-    except ValueError as error:
-        messages.error(request, str(error))
-        return redirect("cart:detail")
-
-    # Only clear the cart after the database transaction succeeds.
-    request.session["cart"] = {}
-    request.session.modified = True
-
-    # Redirect instead of directly rendering.
-    # This prevents refresh from submitting the order again.
-    return redirect("sales:confirmation", sale_id=sale.id)
-
+    return render(
+        request,
+        "sales/checkout.html",
+        {
+            "form": form,
+            "items": items,
+            "subtotal": display_subtotal,
+        },
+    )
 
 def confirmation(request, sale_id):
     # Find the completed sale.

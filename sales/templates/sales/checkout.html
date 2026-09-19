@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Checkout | Bookstore
+{% endblock %}
+
+{% block content %}
+
+<h1>Checkout</h1>
+
+<div class="row">
+
+    <div class="col-md-7">
+
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <h3>Customer Information</h3>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        {{ form.full_name.label_tag }}
+                        {{ form.full_name }}
+                        {{ form.full_name.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.phone.label_tag }}
+                        {{ form.phone }}
+                        {{ form.phone.errors }}
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg">
+                        Place Order
+                    </button>
+
+                    <a href="{% url 'cart:detail' %}" class="btn btn-secondary">
+                        Return to Cart
+                    </a>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-5">
+
+        <div class="card">
+            <div class="card-body">
+
+                <h3>Order Summary</h3>
+
+                <table class="table">
+
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            {{ item.book.title }}
+                            <br>
+                            <small>
+                                Qty: {{ item.quantity }}
+                            </small>
+                        </td>
+
+                        <td class="text-end">
+                            ${{ item.line_total }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </table>
+
+                <h4 class="text-end">
+                    Total: ${{ subtotal }}
+                </h4>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

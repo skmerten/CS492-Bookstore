@@ -67,13 +67,11 @@
         <p class="text-end fs-4">
             <strong>Subtotal: ${{ subtotal }}</strong>
         </p>
-        <form method="post" action="{% url 'sales:checkout' %}" class="text-end mb-3">
-            {% csrf_token %}
-
-            <button type="submit" class="btn btn-success btn-lg">
-                Checkout
-            </button>
-        </form>
+        <div class="text-end mb-3">
+            <a href="{% url 'sales:checkout' %}" class="btn btn-success btn-lg">
+                Proceed to Checkout
+            </a>
+        </div>
 
         {% else %}
         <!--Show this message when no books have been added.-->

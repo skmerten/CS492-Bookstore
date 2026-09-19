@@ -17,6 +17,18 @@
             Your order has been successfully placed.
         </p>
 
+        {% if sale.customer %}
+        <p>
+            <strong>Customer:</strong>
+            {{ sale.customer.full_name }}
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            {{ sale.customer.email }}
+        </p>
+        {% endif %}
+
         <p>
             <strong>Order Number:</strong>
             {{ sale.id }}
