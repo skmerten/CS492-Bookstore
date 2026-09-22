@@ -1,0 +1,69 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    Customer Book Request | Bookstore
+{% endblock %}
+
+{% block content %}
+
+<h1>Customer Book Request</h1>
+<p class="text-muted">
+    Record a customer's request for a book that is not currently available.
+</p>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            <h3 class="mb-3">Customer Information</h3>
+            {% if customer_form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ customer_form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <div class="mb-3">
+                {{ customer_form.full_name.label_tag }}
+                {{ customer_form.full_name }}
+                {{ customer_form.full_name.errors }}
+            </div>
+
+            <div class="mb-3">
+                {{ customer_form.email.label_tag }}
+                {{ customer_form.email }}
+                {{ customer_form.email.errors }}
+            </div>
+
+            <div class="mb-4">
+                {{ customer_form.phone.label_tag }}
+                {{ customer_form.phone }}
+                {{ customer_form.phone.errors}}
+            </div>
+
+            <h3 class="mb-3">Requested Book</h3>
+            <div class="mb-3">
+                {{ request_form.requested_title.label_tag }}
+                {{ request_form.requested_title }}
+                {{ request_form.requested_title.errors }}
+            </div>
+
+            <div class="mb-4">
+                {{ request_form.requested_author.label_tag }}
+                {{ request_form.requested_author }}
+                {{ request_form.requested_author.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Save Customer Request
+            </button>
+
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

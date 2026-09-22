@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Customer Request Log | Bookstore
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>Customer Request Log</h1>
+        <p class="text-muted mb-0">
+            View customer requests that have been recorded by employees.
+        </p>
+    </div>
+
+    <a href="{% url 'orders:create_customer_request' %}" class="btn btn-primary">
+        Record New Request
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Requested Book</th>
+                        <th>Customer</th>
+                        <th>Contact Information</th>
+                        <th>Request Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for customer_request in customer_requests %}
+                    <tr>
+                        <td>
+                            <strong>
+                                {{ customer_request.requested_title }}
+                            </strong>
+
+                            {% if customer_request.requested_author %}
+                            <br>
+                            <small class="text-muted">
+                                By {{ customer_request.requested_author }}
+                            </small>
+                        {% endif %}
+                        </td>
+
+                        <td>
+                            {{ customer_request.customer.full_name }}
+                        </td>
+
+                        <td>
+                            {% if customer_request.customer.email %}
+                                {{ customer_request.customer.email }}
+                            {% endif %}
+
+                            {% if customer_request.customer.phone %}
+
+                            {% if customer_request.customer.email %}
+                                 <br>
+                            {% endif %}
+
+                        {{ customer_request.customer.phone }}
+
+                        {% endif %}
+
+                        {% if not customer_request.customer.email and not customer_request.customer.phone %}
+                            <span class="text-muted">No contact details</span>
+                        {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ customer_request.request_date|date:"M j, Y, g:i a"}}
+                        </td>
+
+                        <td> 
+                           {% if customer_request.status %}
+                                {{ customer_request.status }}
+                            {% else %}
+                            <span class="text-muted">Not Set</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
