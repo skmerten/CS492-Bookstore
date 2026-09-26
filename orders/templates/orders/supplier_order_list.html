@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Purchase Orders | Bookstore{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>Purchase Orders</h1>
+        <p class="text-muted mb-0">Orders placed with vendors for bookstore inventory.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'orders:supplier_list' %}" class="btn btn-outline-secondary">Vendors</a>
+        <a href="{% url 'orders:create_supplier_order' %}" class="btn btn-primary">New Purchase Order</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>PO</th>
+                        <th>Vendor</th>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in supplier_orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.supplier.name }}</td>
+                        <td>{{ order.order_date|date:"M j, Y" }}</td>
+                        <td>{{ order.user.username|default:"-" }}</td>
+                        <td>{{ order.items.count }}</td>
+                        <td>${{ order.total_cost|floatformat:2 }}</td>
+                        <td>
+                            {% if order.status == "Received" %}
+                                <span class="badge bg-success">Received</span>
+                            {% elif order.status == "Cancelled" %}
+                                <span class="badge bg-danger">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Ordered</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'orders:supplier_order_detail' order.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No purchase orders have been created yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
