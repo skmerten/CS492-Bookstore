@@ -219,3 +219,5 @@ __marimo__/
 
 #Local database backups may contain customer and sales data.
 backups/
+.vercel
+.env*

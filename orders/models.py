@@ -68,17 +68,28 @@ class SupplierOrder(models.Model):
             order.status = self.Status.RECEIVED
             order.inventory_updated = True
             order.save(update_fields=["status", "inventory_updated"])
+            CustomerRequest.objects.filter(
+                purchase_order=order,
+                status=CustomerRequest.Status.APPROVED,
+            ).update(status=CustomerRequest.Status.COMPLETED)
 
         self.refresh_from_db()
         return True
 
     def cancel(self):
         """Cancel an order that has not already been received."""
-        if self.status == self.Status.RECEIVED or self.inventory_updated:
-            raise ValueError("A received purchase order cannot be cancelled.")
+        with transaction.atomic():
+            order = SupplierOrder.objects.select_for_update().get(pk=self.pk)
+            if order.status == self.Status.RECEIVED or order.inventory_updated:
+                raise ValueError("A received purchase order cannot be cancelled.")
 
-        self.status = self.Status.CANCELLED
-        self.save(update_fields=["status"])
+            order.status = self.Status.CANCELLED
+            order.save(update_fields=["status"])
+            CustomerRequest.objects.filter(
+                purchase_order=order,
+                status=CustomerRequest.Status.APPROVED,
+            ).update(status=CustomerRequest.Status.CANCELLED)
+        self.refresh_from_db()
 
 
 # A line item on the supply order (for example, 10 copies of one book).
@@ -102,12 +113,30 @@ class SupplierOrderItem(models.Model):
 
 # Customer request for a new book which could turn into a supply order.
 class CustomerRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "Pending", "Pending"
+        APPROVED = "Approved", "Approved"
+        REJECTED = "Rejected", "Rejected"
+        CANCELLED = "Cancelled", "Cancelled"
+        COMPLETED = "Completed", "Completed"
+
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True, blank=True)
+    purchase_order = models.OneToOneField(
+        SupplierOrder,
+        on_delete=models.PROTECT,
+        related_name="customer_request",
+        null=True,
+        blank=True,
+    )
     requested_title = models.CharField(max_length=200)
     requested_author = models.CharField(max_length=200, blank=True)
     request_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
 
     def __str__(self):
         return f"{self.requested_title} - {self.customer.full_name}"

@@ -14,6 +14,16 @@ urlpatterns = [
         views.customer_request_log,
         name="customer_request_log",
     ),
+    path(
+        "customer-requests/<int:request_id>/",
+        views.customer_request_detail,
+        name="customer_request_detail",
+    ),
+    path(
+        "customer-requests/<int:request_id>/purchase-order/",
+        views.create_supplier_order,
+        name="create_supplier_order_for_request",
+    ),
     path("vendors/", views.supplier_list, name="supplier_list"),
     path("vendors/new/", views.create_supplier, name="create_supplier"),
     path(
