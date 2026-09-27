@@ -80,9 +80,11 @@
 
                 </table>
 
-                <h4 class="text-end">
-                    Total: ${{ subtotal }}
-                </h4>
+                <div class="text-end">
+                    <p>Subtotal: ${{ subtotal|floatformat:2 }}</p>
+                    <p>Tax: ${{ tax|floatformat:2 }}</p>
+                    <h4>Total ${{ total|floatformat:2 }}</h4>
+                </div>
 
             </div>
         </div>

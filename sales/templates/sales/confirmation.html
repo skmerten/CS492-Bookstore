@@ -79,6 +79,12 @@
             Continue Shopping
         </a>
 
+        {% if user.is_authenticated %}
+        <a href="{% url 'sales:cash_payment_for_sale' sale.id %}" class="btn btn-success">
+            Take Cash Payment
+        </a>
+        {% endif %}
+
     </div>
 </div>
 

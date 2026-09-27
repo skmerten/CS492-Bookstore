@@ -10,14 +10,17 @@ from django.shortcuts import get_object_or_404, redirect, render
 from inventory.models import Book
 from .forms import CustomerCheckoutForm
 from .models import Sale, SaleItem
-from .services import calculate_daily_sales_total
+from .services import calculate_daily_sales_total, calculate_sales_tax
 
 # Only logged-in employees may access the cashier payment page
 @login_required
-def cash_payment(request):
+def cash_payment(request, sale_id=None):
+    #Load a completed sale when cashier page was opened from confirmation.
+    sale = get_object_or_404(Sale, id=sale_id) if sale_id is not None else None
     #This dictionary holds information sent to the HTML page.
     context = {
-        "sale_total": "",
+        "sale": sale,
+        "sale_total":sale.total if sale is not None else "",
         "amount_paid":"",
         "result_ready": False,
     }
@@ -25,21 +28,36 @@ def cash_payment(request):
     #Only calculate after the cashier submits the form.
     if request.method == "POST":
         try:
-            #Read the two amounts from the form.
-            sale_total = Decimal(request.POST.get("sale_total", "0"))
-            amount_paid = Decimal(request.POST.get("amount_paid", "0"))
+            #Use the stored total when this cashieer page is tied to a saved sale.
+            if sale is not None:
+                sale_total = sale.total
+            else:
+                sale_total = Decimal(request.POST.get("sale_total", "0"))
+            amount_paid = Decimal(request.POST.get("amount_paid", "o"))
 
             #Prevent negative dollar amounts.
             if sale_total < 0 or amount_paid < 0:
                 raise InvalidOperation
 
-            #Keep the entered values so the page can display them.
+            #Keep validated payment values and mark the calculation result.
             context["sale_total"] = sale_total
             context["amount_paid"] = amount_paid
+            context["result_ready"] = True
 
             if amount_paid >= sale_total:
                 #Customer paid more than sales total; calculate change.
                 context["change_due"] = amount_paid - sale_total
+                #Store completed cash payment details on the linked sale.
+                if sale is not None:
+                    sale.payment_method = "Cash"
+                    sale.amount_paid = amount_paid
+                    sale.change_due = context["change_due"]
+                    sale.save(
+                        update_fields=["payment_method", "amount_paid", "change_due"]
+                    )
+                    messages.success(
+                        request, f"Cash payment for sale #{sale.id} was recorded."
+                    )
             else:
                 context["amount_remaining"] = sale_total - amount_paid
 
@@ -92,6 +110,10 @@ def checkout(request):
         })
 
         display_subtotal += line_total
+
+        #Calculate all amount before confirmation page so customer can review full cost.
+        display_tax = calculate_sales_tax(display_subtotal)
+        display_total = display_subtotal + display_tax
 
     # GET = display empty form.
     # POST = populate form with submitted customer information.
@@ -170,10 +192,12 @@ def checkout(request):
 
                 # Finish calculating sale totals.
                 sale.subtotal = subtotal
-                sale.tax = Decimal("0.00")
-                sale.total = subtotal
-                sale.amount_paid = subtotal
-                sale.save()
+                sale.tax = calculate_sales_tax(subtotal)
+                sale.total = subtotal + sale.tax
+                sale.amount_paid = sale.total
+                sale.save(
+                    update_fields=["subtotal", "tax", "total", "amount_paid"]
+                )
 
         except Book.DoesNotExist:
 
@@ -209,6 +233,8 @@ def checkout(request):
             "form": form,
             "items": items,
             "subtotal": display_subtotal,
+            "tax": display_tax,
+            "total": display_total,
         },
     )
 

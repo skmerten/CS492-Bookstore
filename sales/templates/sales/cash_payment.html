@@ -8,7 +8,7 @@
     <h1>Cashier Cash Payment</h1>
     <p>Logged in as: {{ user.username }}</p>
 
-    <!-- The form will send the sale total and cash received to this page. -->
+    <!-- The form accepts cash received and may use a selected sale's stored total. -->
     <form method="post" class="card card-body">
         {% csrf_token %}
 
@@ -22,7 +22,7 @@
                 step="0.01"
                 value="{{ sale_total }}"
                 class="form-control"
-                required
+                {% if sale %}readonly{% else %}required{% endif %}
             >
         </div>
 
@@ -42,7 +42,7 @@
 
         <!-- We will make this button calculate change in the next step. -->
         <button type="submit" class="btn btn-success">
-            Calculate Change
+            {% if sale %}Record Cash Payment{% else %}Calculate Change{% endif %}
         </button>
     </form>
     <!-- Show an error when the cashier entered invalid amounts. -->
@@ -53,7 +53,7 @@
 {% endif %}
 
 <!-- Show the payment result after a valid form submission. -->
-{% if sale_total %}
+{% if result_ready %}
     <div class="card card-body mt-3">
         <p><strong>Sale Total:</strong> ${{ sale_total }}</p>
         <p><strong>Cash Received:</strong> ${{ amount_paid }}</p>

@@ -7,6 +7,7 @@ app_name = "sales"
 urlpatterns = [
     #Displays the cashier cash-payment page.
     path("cash-payment/", views.cash_payment, name="cash_payment"),
+    path("cash-payment/<int:sale_id>/", views.cash_payment, name="cash_payment_for_sale"),
     path("checkout/", views.checkout, name="checkout"),
     path("confirmation/<int:sale_id>/",views.confirmation,name="confirmation"),
     path("daily-sales/", views.daily_sales_log, name="daily_sales_log"),
