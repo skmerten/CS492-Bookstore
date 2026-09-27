@@ -1,4 +1,5 @@
 from decimal import Decimal, InvalidOperation
+from datetime import date
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,6 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from inventory.models import Book
 from .forms import CustomerCheckoutForm
 from .models import Sale, SaleItem
+from .services import calculate_daily_sales_total
 
 # Only logged-in employees may access the cashier payment page
 @login_required
@@ -226,4 +228,38 @@ def confirmation(request, sale_id):
             "sale": sale,
             "items": items,
         },
+    )
+
+@login_required
+def daily_sales_log(request):
+    #Use today's date when the employee has not selected another date.
+    selected_date = date.today()
+
+    #Read the date chosen in log page's date field.
+    selected_date_value = request.GET.get("date")
+
+    #Convert a valid YYYY-MM-DD value into a python date.
+    if selected_date_value:
+        try:
+            selected_date = date.fromisoformat(selected_date_value)
+        except ValueError:
+
+            #Keep today's date and explain an invalid date is submitted.
+            messages.error(
+                request, "Please select a valid sales date."
+            )
+
+    #Retrieve all sales for specificed date, newest first.
+    sales = (
+        Sale.objects.filter(sale_date__date=selected_date)
+        .select_related("customer", "user").order_by("-sale_date")
+    )
+
+    #Calculate the combined total for all selected date sales.
+    daily_total = calculate_daily_sales_total(selected_date)
+
+    #Display the daily sales log and provide its required information.
+    return render(
+        request, "sales/daily_sales_log.html",
+        {"sales":sales, "selected_date": selected_date, "daily_total": daily_total,},
     )
