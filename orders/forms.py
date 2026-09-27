@@ -28,6 +28,21 @@ class CustomerRequestForm(forms.ModelForm):
         }
 
 
+class CustomerRequestEditForm(CustomerRequestForm):
+    # Approved and completed statuses are set by the linked purchase order.
+    status = forms.ChoiceField(
+        choices=[
+            (CustomerRequest.Status.PENDING, "Pending"),
+            (CustomerRequest.Status.REJECTED, "Rejected"),
+            (CustomerRequest.Status.CANCELLED, "Cancelled"),
+        ],
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    class Meta(CustomerRequestForm.Meta):
+        fields = ["requested_title", "requested_author", "status"]
+
+
 class CustomerRequestCustomerForm(CustomerCheckoutForm):
     # Require at least one way to contact customer.
     def clean(self):
@@ -137,9 +152,16 @@ class SupplierOrderItemForm(forms.ModelForm):
         existing_book = cleaned_data.get("book")
         new_title = (cleaned_data.get("new_title") or "").strip()
 
-        if existing_book and new_title:
+        has_new_book_data = any([
+            new_title,
+            (cleaned_data.get("new_author") or "").strip(),
+            (cleaned_data.get("new_isbn") or "").strip(),
+            cleaned_data.get("new_price") is not None,
+            (cleaned_data.get("new_shelf_location") or "").strip(),
+        ])
+        if existing_book and has_new_book_data:
             raise forms.ValidationError(
-                "Choose an existing book OR enter a new book, not both."
+                "Choose an existing book or enter new book details, not both."
             )
 
         if not existing_book and not new_title:
@@ -147,15 +169,7 @@ class SupplierOrderItemForm(forms.ModelForm):
             # make sure at least one real line item was entered.
             quantity = cleaned_data.get("quantity_ordered")
             cost_each = cleaned_data.get("cost_each")
-            has_any_new_data = any(
-                [
-                    cleaned_data.get("new_author"),
-                    cleaned_data.get("new_isbn"),
-                    cleaned_data.get("new_price") is not None,
-                    cleaned_data.get("new_shelf_location"),
-                ]
-            )
-            if quantity or cost_each is not None or has_any_new_data:
+            if quantity or cost_each is not None or has_new_book_data:
                 raise forms.ValidationError(
                     "Select an existing book or enter a new book title."
                 )

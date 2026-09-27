@@ -40,6 +40,9 @@
                 <div><strong>Employee:</strong> {{ supplier_order.user.username|default:"-" }}</div>
                 <div><strong>Order Total:</strong> ${{ supplier_order.total_cost|floatformat:2 }}</div>
                 <div><strong>Inventory Applied:</strong> {% if supplier_order.inventory_updated %}Yes{% else %}No{% endif %}</div>
+                {% if supplier_order.customer_request %}
+                <div><strong>Customer Request:</strong> <a href="{% url 'orders:customer_request_detail' supplier_order.customer_request.id %}">#{{ supplier_order.customer_request.id }}</a></div>
+                {% endif %}
             </div>
         </div>
     </div>

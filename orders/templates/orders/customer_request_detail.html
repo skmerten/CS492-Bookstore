@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Request #{{ customer_request.id }} | Bookstore{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1>Customer Request #{{ customer_request.id }}</h1>
+        <p class="text-muted">{{ customer_request.customer.full_name }} · {{ customer_request.request_date|date:"M j, Y, g:i a" }}</p>
+    </div>
+    <span class="badge bg-secondary fs-6">{{ customer_request.status }}</span>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h4>Customer</h4>
+        <p class="mb-0">{{ customer_request.customer.full_name }}<br>
+            {{ customer_request.customer.email }}{% if customer_request.customer.email and customer_request.customer.phone %}<br>{% endif %}{{ customer_request.customer.phone }}</p>
+    </div>
+</div>
+
+{% if form %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h4>Edit Request</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="mb-3">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="card mb-4"><div class="card-body">
+    <h4>Requested Book</h4>
+    <p class="mb-0">{{ customer_request.requested_title }}{% if customer_request.requested_author %} by {{ customer_request.requested_author }}{% endif %}</p>
+</div></div>
+{% endif %}
+
+{% if customer_request.purchase_order %}
+<a class="btn btn-outline-primary" href="{% url 'orders:supplier_order_detail' customer_request.purchase_order_id %}">View PO #{{ customer_request.purchase_order_id }}</a>
+{% elif customer_request.status == "Pending" %}
+<a class="btn btn-success" href="{% url 'orders:create_supplier_order_for_request' customer_request.id %}">Create PO</a>
+{% endif %}
+<a class="btn btn-outline-secondary" href="{% url 'orders:customer_request_log' %}">Back to Requests</a>
+{% endblock %}

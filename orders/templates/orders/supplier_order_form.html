@@ -7,8 +7,9 @@
     <div>
         <h1>New Purchase Order</h1>
         <p class="text-muted mb-0">Order one or more books from a vendor.</p>
+        {% if customer_request %}<p class="mb-0">For <a href="{% url 'orders:customer_request_detail' customer_request.id %}">Customer Request #{{ customer_request.id }}</a>. Title and author are filled in below.</p>{% endif %}
     </div>
-    <a href="{% url 'orders:create_supplier' %}" class="btn btn-outline-secondary">Add New Vendor</a>
+    <a href="{% url 'orders:create_supplier' %}{% if customer_request %}?request={{ customer_request.id }}{% endif %}" class="btn btn-outline-secondary">Add New Vendor</a>
 </div>
 
 <form method="post" id="purchase-order-form">
@@ -71,6 +72,7 @@
                     </div>
 
                     <hr>
+                    <fieldset class="new-book-fields">
                     <div class="row g-3">
                         <div class="col-md-4">
                             {{ form.new_title.label_tag }}
@@ -98,6 +100,7 @@
                             {{ form.new_shelf_location.errors }}
                         </div>
                     </div>
+                    </fieldset>
                 </div>
             </div>
         {% endfor %}
@@ -117,6 +120,7 @@
                         </div>
                     </div>
                     <hr>
+                    <fieldset class="new-book-fields">
                     <div class="row g-3">
                         <div class="col-md-4">{{ form.new_title.label_tag }}{{ form.new_title }}</div>
                         <div class="col-md-3">{{ form.new_author.label_tag }}{{ form.new_author }}</div>
@@ -124,6 +128,7 @@
                         <div class="col-md-1">{{ form.new_price.label_tag }}{{ form.new_price }}</div>
                         <div class="col-md-2">{{ form.new_shelf_location.label_tag }}{{ form.new_shelf_location }}</div>
                     </div>
+                    </fieldset>
                 {% endwith %}
             </div>
         </div>
@@ -131,7 +136,7 @@
 
     <div class="d-flex gap-2 mt-4">
         <button type="submit" class="btn btn-primary">Submit Purchase Order</button>
-        <a href="{% url 'orders:supplier_order_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        <a href="{% if customer_request %}{% url 'orders:customer_request_detail' customer_request.id %}{% else %}{% url 'orders:supplier_order_list' %}{% endif %}" class="btn btn-outline-secondary">Cancel</a>
     </div>
 </form>
 
@@ -142,11 +147,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalForms = document.getElementById("id_items-TOTAL_FORMS");
     const template = document.getElementById("empty-form-template");
 
+    function syncBookFields(row) {
+        const existingBook = row.querySelector('select[name$="-book"]');
+        const newFields = row.querySelector(".new-book-fields");
+        const hasNewDetails = Array.from(newFields.querySelectorAll("input"))
+            .some(input => input.value.trim() !== "");
+        newFields.disabled = Boolean(existingBook.value);
+        existingBook.disabled = !existingBook.value && hasNewDetails;
+    }
+
+    formsContainer.querySelectorAll(".item-form").forEach(syncBookFields);
+    for (const eventName of ["input", "change"]) {
+        formsContainer.addEventListener(eventName, function (event) {
+            const row = event.target.closest(".item-form");
+            if (row) syncBookFields(row);
+        });
+    }
+
     addButton.addEventListener("click", function () {
         const formNumber = parseInt(totalForms.value, 10);
         const html = template.innerHTML.replaceAll("__prefix__", formNumber);
         formsContainer.insertAdjacentHTML("beforeend", html);
         totalForms.value = formNumber + 1;
+        syncBookFields(formsContainer.lastElementChild);
     });
 });
 </script>

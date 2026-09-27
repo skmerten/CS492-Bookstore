@@ -39,7 +39,7 @@
                     <tr>
                         <td>
                             <strong>
-                                {{ customer_request.requested_title }}
+                                <a href="{% url 'orders:customer_request_detail' customer_request.id %}">{{ customer_request.requested_title }}</a>
                             </strong>
 
                             {% if customer_request.requested_author %}
@@ -80,10 +80,9 @@
                         </td>
 
                         <td> 
-                           {% if customer_request.status %}
-                                {{ customer_request.status }}
-                            {% else %}
-                            <span class="text-muted">Not Set</span>
+                            {{ customer_request.status }}
+                            {% if customer_request.purchase_order %}
+                                <br><a href="{% url 'orders:supplier_order_detail' customer_request.purchase_order_id %}">PO #{{ customer_request.purchase_order_id }}</a>
                             {% endif %}
                         </td>
                     </tr>
